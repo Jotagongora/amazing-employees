@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -12,6 +13,13 @@ use Symfony\Component\Routing\Annotation\Route;
 // que pone a disposición nuestra multitud de características.
 class DefaultController extends AbstractController
 {
+    const PEOPLE = [
+        ['name' => 'Carlos', 'email' => 'carlos@correo.com', 'age' => 30, 'city' => 'Benalmádena'],
+        ['name' => 'Carmen', 'email' => 'carmen@correo.com', 'age' => 25, 'city' => 'Fuengirola'],
+        ['name' => 'Carmelo', 'email' => 'carmelo@correo.com', 'age' => 35, 'city' => 'Torremolinos'],
+        ['name' => 'Carolina', 'email' => 'carolina@correo.com', 'age' => 38, 'city' => 'Málaga'],        
+    ];
+
     /**
      * @Route("/default", name="default_index")
      * 
@@ -28,18 +36,35 @@ class DefaultController extends AbstractController
         // render() es un método hereado de AbstractController
         // que devuelve el contenido declarado en una plantillas de Twig.
         // https://twig.symfony.com/doc/3.x/templates.html
-        $name = 'Zacarías';
+        
+        // symfony console
+        // es un comando equivalente a 
+        // php bin/console
 
+        // Mostrar las rutas disonibles en mi navegador:
+        // - symfony console debug:router
+        // - symfony console debug:router default_index
+        // - symfony console router --help
+        // - symfony console router:match /        
+        
         return $this->render('default/index.html.twig', [
-            'nombre' => $name]);
+           'people' => self::PEOPLE
+        ]);
     }
 
     /**
-     * @Route("hola", name="default_hola")
+     * @Route("/hola", name="default_hola")
      */
-
     public function hola(): Response {
-        return new Response('<html><body>Hola</body></html>');
+        return new Response('<html><body>hola</body></html>');
+    }
+
+    /**
+     * @Route("/default.{_format}", name="default_index_json", requirements = {"_format": "json"})
+     */
+    public function indexJson(): JsonResponse {
+        return $this->json(self::PEOPLE);
     }
 }
+
 
