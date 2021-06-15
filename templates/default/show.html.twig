@@ -11,23 +11,14 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Localidad</th>            
-                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for person in people %}
             <tr>
                 <td>{{ person.name }}</td>
-                <td>{{ person.email }}</td>
+                <td><a href="{{ path('default_show', { id: id }) }}">{{ person.email }}</a></td>
                 <td>{{ person.city }}</td>
-                <td>
-                    <ul>
-                        <li><a href="{{ path('default_show', { id: loop.index0 }) }}">Ver en formato HTML</a></li>
-                        {# <li><a href="{{ path('default_index_json')}}">Ver en formato JSON</a></li> #}
-                    </ul>
-                </td>
             </tr>
-            {% endfor %}
         </tbody>
     </table>
 {% endblock %}
@@ -38,4 +29,4 @@
         background-color: pink;
     }
 </style>
-{% endblock %}
+{% endblock %} 

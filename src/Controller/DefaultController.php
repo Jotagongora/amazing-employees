@@ -6,12 +6,14 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 // AbstractController es un controlador de Symfony
 // que pone a disposición nuestra multitud de características.
-class DefaultController extends AbstractController
+class DefaultController extends AbstractController 
 {
     const PEOPLE = [
         ['name' => 'Carlos', 'email' => 'carlos@correo.com', 'age' => 30, 'city' => 'Benalmádena'],
@@ -59,12 +61,59 @@ class DefaultController extends AbstractController
         return new Response('<html><body>hola</body></html>');
     }
 
-    /**
-     * @Route("/default.{_format}", name="default_index_json", requirements = {"_format": "json"})
+        /**
+     * @Route(
+     *      "/default.{_format}",
+     *      name="default_index_json",
+     *      requirements = {
+     *          "_format": "json"
+     *      }
+     * )
+     * 
+     * El comando:
+     * symfony console router:match /default.json
+     * buscará la acción coincidente con la ruta indicada
+     * y mostrará la información asociada.
      */
-    public function indexJson(): JsonResponse {
-        return $this->json(self::PEOPLE);
+    public function indexJson(Request $request): JsonResponse {
+        $data = $request->query->has('id') ? self::PEOPLE[$request->query->get('id')] : self::PEOPLE;
+
+        return $this->json($data);
+    }
+
+     /**
+     * @Route(
+     *      "/default/{id}",
+     *      name="default_show",
+     *      requirements = {
+     *          "id": "[0-3]"
+     *      }
+     * )
+     */
+
+    public function show(int $id): Response {
+
+                // - symfony console router:match /
+
+        // Acceso y propiedades del objeto Request.
+        // https://symfony.com/doc/current/controller.html#the-request-and-response-object
+        // echo '<pre>query: '; var_dump($request->query); echo '</pre>'; // Equivalente a $_GET, pero supervitaminado.
+        // echo '<pre>post: '; var_dump($request->request); echo '</pre>'; // Equivalente a $_POST, pero supervitaminado.
+        // echo '<pre>server: '; var_dump($request->server); echo '</pre>'; // Equivalente a $_SERVER, pero supervitaminado.
+        // echo '<pre>files: '; var_dump($request->files); echo '</pre>'; // Equivalente a $_FILES, pero supervitaminado.
+        // echo '<pre>idioma prefererido: '; var_dump($request->getPreferredLanguage()); echo '</pre>';
+
+        return $this->render('default/show.html.twig', [
+            'id' => $id,
+            'person' => self::PEOPLE[$id]
+        ]);
+    }
+
+    public function redirectToHome(): RedirectResponse {
+        // Devolver directamente un objeto RedirectResponse.
+        return new RedirectResponse('/', Response::HTTP_TEMPORARY_REDIRECT);
     }
 }
+
 
 
